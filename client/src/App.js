@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PagesChart from "./PagesChart";
 
 function App() {
   const [visitors, setVisitors] = useState(0);
@@ -23,17 +24,20 @@ function App() {
     <div style={{ padding: "20px" }}>
       <h1>Analytics Dashboard</h1>
 
-      <h2>Visitors: {visitors}</h2>
-      <h2>Sessions: {sessions}</h2>
+      <div style={{ display: "flex", gap: "20px" }}>
+        <div style={{ padding: "10px", border: "1px solid black" }}>
+          <h3>Visitors</h3>
+          <p>{visitors}</p>
+        </div>
 
-      <h2>Top Pages</h2>
-      <ul>
-        {pages.map((p, index) => (
-          <li key={index}>
-            {p.page} - {p.views} views
-          </li>
-        ))}
-      </ul>
+        <div style={{ padding: "10px", border: "1px solid black" }}>
+          <h3>Sessions</h3>
+          <p>{sessions}</p>
+        </div>
+      </div>
+
+      <h2>Page Views</h2>
+      <PagesChart data={pages} />
     </div>
   );
 }

@@ -2,20 +2,27 @@
 
   const API_URL = "http://localhost:3000/track";
 
-  // Generate random session ID
-  function generateSessionId() {
-    return "session_" + Math.random().toString(36).substring(2);
+  function generateId(prefix) {
+    return prefix + "_" + Math.random().toString(36).substring(2);
   }
 
-  // Get or create session ID
-  let sessionId = localStorage.getItem("session_id");
+  // USER
+  let userId = localStorage.getItem("user_id");
+  if (!userId) {
+    userId = generateId("user");
+    localStorage.setItem("user_id", userId);
+  }
 
+  // SESSION
+  let sessionId = sessionStorage.getItem("session_id");
   if (!sessionId) {
-    sessionId = generateSessionId();
-    localStorage.setItem("session_id", sessionId);
+    sessionId = generateId("session");
+    sessionStorage.setItem("session_id", sessionId);
+
+    sendEvent("session_start");
   }
 
-  function sendEvent(event, page) {
+  function sendEvent(event) {
     fetch(API_URL, {
       method: "POST",
       headers: {
@@ -23,16 +30,14 @@
       },
       body: JSON.stringify({
         event: event,
-        page: page,
+        page: window.location.pathname,
         session_id: sessionId,
+        user_id: userId,
+        timestamp: new Date().toISOString()
       }),
-    })
-    .then(res => res.json())
-    .then(data => console.log("Tracked:", data))
-    .catch(err => console.error("Error:", err));
+    });
   }
 
-  // Track page view
-  sendEvent("page_view", window.location.pathname);
+  sendEvent("page_view");
 
 })();
